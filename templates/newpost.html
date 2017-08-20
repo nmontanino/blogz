@@ -3,7 +3,7 @@
 {% block content %}
     <h1>Add Blog Entry</h1>
     <br>
-    <form action="/blog" method='post'>
+    <form method='post'>
         <label>Title:
             <br>
             <input type="text" name='blog-title'>
@@ -14,7 +14,6 @@
             <textarea name="blog-entry"></textarea>
         </label>
         <br>
-        <!-- <input type="hidden" name="blog-id" value="{{blog.id}}"> -->
         <input type="submit" value='Add Entry'>
     </form>
 {% endblock %}   

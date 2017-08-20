@@ -5,7 +5,7 @@
 
     <hr>
 
-    {% if blog|length == 0 %}
+    {% if posts|length == 0 %}
     <p>No blog posts yet.</p>
     {% else %}
     
@@ -13,11 +13,10 @@
     
     <h2>{{post.title}}</h2>
     <p>{{post.body}}</p>
-                
+    <hr>            
+    
     {% endfor %}  
 
     {% endif %}
-
-    <hr>
 
 {% endblock %}
