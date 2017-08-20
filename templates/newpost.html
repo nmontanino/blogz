@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Add Blog Entry</h1>
+    <br>
+    <form action="/blog" method='post'>
+        <label>Title:
+            <br>
+            <input type="text" name='blog-title'>
+        </label>
+        <br>
+        <label>Blog Entry (Max 420 Characters):
+            <br>
+            <textarea name="blog-entry"></textarea>
+        </label>
+        <br>
+        <!-- <input type="hidden" name="blog-id" value="{{blog.id}}"> -->
+        <input type="submit" value='Add Entry'>
+    </form>
+{% endblock %}   
+
