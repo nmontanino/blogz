@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>{{title}}</title>
-    </head>
+<head>
+    <title>{{title}}</title>
+    <style>
+        h1{
+            text-align: center;
+        }
+    </style>
+</head>
 <body>
-    <a href="/blog">Main Blog Page</a>
-    <a href="/newpost">Add a Blog Entry</a>
+    <nav>
+        <a href="/blog">Main Blog Page</a> | 
+        <a href="/newpost">Add a Blog Entry</a>
+    </nav>
 
     {% block content %}
     {% endblock %}

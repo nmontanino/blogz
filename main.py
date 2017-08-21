@@ -25,7 +25,7 @@ def index():
 def blog():
     
     posts = Blog.query.all()
-    return render_template('blog.html', posts=posts)
+    return render_template('blog.html', posts=posts, title='Blog')
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
@@ -40,7 +40,7 @@ def new_post():
         db.session.commit()
         return redirect('/blog')
     else:
-        return render_template('newpost.html')
+        return render_template('newpost.html', title='New Entry')
 
 if  __name__ == "__main__":
     app.run()
