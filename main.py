@@ -12,7 +12,6 @@ class Blog(db.Model):
     title = db.Column(db.String(120))
     body = db.Column(db.String(420))
 
-
     def __init__(self, title, body):
         self.title = title
         self.body = body
@@ -23,8 +22,15 @@ def index():
 
 @app.route('/blog')
 def blog():
-    posts = Blog.query.all()
-    return render_template('blog.html', posts=posts, title='Blog')
+    blog_id = request.args.get('id')
+
+    if blog_id == None:
+        posts = Blog.query.all()
+        return render_template('blog.html', posts=posts, title='Blog')
+    else:
+        blog_id = int(blog_id)
+        post = Blog.query.get(blog_id)
+        return render_template('entry.html', post=post, title='Blog')
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
@@ -44,7 +50,12 @@ def new_post():
             new_entry = Blog(blog_title, blog_body)
             db.session.add(new_entry)
             db.session.commit()
+            
+            # post_id = Blog.query.get(new_entry)
+            
             return redirect('/blog')
+            
+            # return redirect('/blog?id={}'.format(int(post_id)))
         else:
             return render_template('newpost.html', title='New Entry', title_error=title_error, body_error=body_error, 
                 blog_title=blog_title, blog_body=blog_body)
