@@ -23,24 +23,33 @@ def index():
 
 @app.route('/blog')
 def blog():
-    
     posts = Blog.query.all()
     return render_template('blog.html', posts=posts, title='Blog')
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
-    
-    if request.method == 'POST':
-        title = request.form['blog-title']
-        body = request.form['blog-entry']
 
-        new_entry = Blog(title, body)
-        
-        db.session.add(new_entry)
-        db.session.commit()
-        return redirect('/blog')
-    else:
-        return render_template('newpost.html', title='New Entry')
+    if request.method == 'POST':
+        blog_title = request.form['blog-title']
+        blog_body = request.form['blog-entry']
+        title_error = ''
+        body_error = ''
+
+        if not blog_title:
+            title_error = "Please enter a blog title"
+        if not blog_body:
+            body_error = "Please enter a blog entry"
+
+        if not body_error and not title_error:
+            new_entry = Blog(blog_title, blog_body)
+            db.session.add(new_entry)
+            db.session.commit()
+            return redirect('/blog')
+        else:
+            return render_template('newpost.html', title='New Entry', title_error=title_error, body_error=body_error, 
+                blog_title=blog_title, blog_body=blog_body)
+    
+    return render_template('newpost.html', title='New Entry')
 
 if  __name__ == "__main__":
     app.run()
