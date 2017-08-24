@@ -1,2 +1,3 @@
-# build-a-blog
-Simple blog project for LaunchCode.
+### BLOGZ
+A simple blog web app created using Flask and SQLAlchemy.
+
