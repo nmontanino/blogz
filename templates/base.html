@@ -13,11 +13,14 @@
 </head>
 <body>
     <nav>
+        <a href="/">Home</a> |
         <a href="/blog">Main Blog Page</a> | 
         <a href="/newpost">Add a Blog Entry</a> |
         <a href="/login">Login</a> |
         <a href="/logout">Logout</a>
     </nav>
+    
+    <h1>{{header}}</h1>
     
     {% with messages = get_flashed_messages(with_categories=True) %}
     <ul>

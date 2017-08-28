@@ -31,13 +31,16 @@ class User(db.Model):
         self.password = password
 
 
-# @app.before_request
-# def require_login():
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'signup', 'index', 'blog']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
     
-
 @app.route('/')
-def index():         
-    return redirect('/blog')
+def index():
+    users = User.query.all()
+    return render_template('index.html', users=users, title='Home', header='Blog Users')
 
 @app.route('/blog')
 def blog():
@@ -45,7 +48,7 @@ def blog():
 
     if blog_id == None:
         posts = Blog.query.all()
-        return render_template('blog.html', posts=posts, title='Build-a-blog')
+        return render_template('blog.html', posts=posts, title='Blogz', header='Blog Posts')
     else:
         post = Blog.query.get(blog_id)
         return render_template('entry.html', post=post, title='Blog Entry')
@@ -72,10 +75,10 @@ def new_post():
             db.session.commit()        
             return redirect('/blog?id={}'.format(new_entry.id)) 
         else:
-            return render_template('newpost.html', title='New Entry', title_error=title_error, body_error=body_error, 
-                blog_title=blog_title, blog_body=blog_body)
+            return render_template('newpost.html', title='New Entry', header='New Blog Entry', title_error=title_error, 
+                body_error=body_error, blog_title=blog_title, blog_body=blog_body)
     
-    return render_template('newpost.html', title='New Entry')
+    return render_template('newpost.html', title='New Entry', header='New Blog Entry')
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
@@ -91,7 +94,7 @@ def login():
         else:
             flash('User password is incorrect, or user does not exist', 'error')
     
-    return render_template('login.html')
+    return render_template('login.html', header='Login')
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -110,9 +113,9 @@ def signup():
             session['username'] = username
             return redirect('/newpost')
         else:
-            return "<h1>Duplicate User</h1>"                        # need to fancy this up
+            flash('User already exists', 'error')
 
-    return render_template('signup.html')
+    return render_template('signup.html', header='Signup')
 
 @app.route('/logout')
 def logout():
