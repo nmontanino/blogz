@@ -44,14 +44,19 @@ def index():
 
 @app.route('/blog')
 def blog():
+    posts = Blog.query.all()
+    
     blog_id = request.args.get('id')
-
-    if blog_id == None:
-        posts = Blog.query.all()
-        return render_template('blog.html', posts=posts, title='Blogz', header='Blog Posts')
-    else:
+    user_id = request.args.get('user')
+    
+    if user_id != None:
+        posts = Blog.query.filter_by(owner_id=user_id)
+        return render_template('user.html', posts=posts, header="Blog Posts")
+    if blog_id != None:
         post = Blog.query.get(blog_id)
         return render_template('entry.html', post=post, title='Blog Entry')
+
+    return render_template('blog.html', posts=posts, title='Blogz', header='All Blog Posts')
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
