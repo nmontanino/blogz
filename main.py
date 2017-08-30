@@ -19,7 +19,6 @@ class Blog(db.Model):
         self.body = body
         self.owner = owner
         
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True)
@@ -29,7 +28,6 @@ class User(db.Model):
     def __init__(self, username, password):
         self.username = username
         self.password = password
-
 
 @app.before_request
 def require_login():
@@ -51,7 +49,7 @@ def blog():
     
     if user_id != None:
         posts = Blog.query.filter_by(owner_id=user_id)
-        return render_template('user.html', posts=posts, header="Blog Posts")
+        return render_template('user.html', posts=posts, header="User Posts")
     if blog_id != None:
         post = Blog.query.get(blog_id)
         return render_template('entry.html', post=post, title='Blog Entry')
@@ -108,17 +106,20 @@ def signup():
         password = request.form['password']
         verify = request.form['verify']
 
-        #TODO - validate user's data
-
         existing_user = User.query.filter_by(username=username).first()
-        if not existing_user:
+
+        if password != verify:
+            flash('Password does not match', "error")
+        elif len(username) < 3 or len(password) < 3:
+            flash('Username and password must be more than 3 characters', 'error')
+        elif existing_user:
+            flash('User already exists', 'error')
+        else:
             new_user = User(username, password)
             db.session.add(new_user)
             db.session.commit()
             session['username'] = username
             return redirect('/newpost')
-        else:
-            flash('User already exists', 'error')
 
     return render_template('signup.html', header='Signup')
 
