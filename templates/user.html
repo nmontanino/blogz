@@ -5,7 +5,7 @@
     {% for post in posts %}
     <h2><a href="/blog?id={{post.id}}">{{post.title}}</a></h2>
     <p>{{post.body}}</p>
-    <p>written by <a href="/blog?user={{post.owner_id}}">{{post.owner.username}}</a></p>
+    <p><small>written by <a href="/blog?user={{post.owner_id}}">{{post.owner.username}}</a></small></p>
     <hr>
     {% endfor %}
 
