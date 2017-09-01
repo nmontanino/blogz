@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template, session, flash
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
@@ -12,11 +13,15 @@ class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120))
     body = db.Column(db.Text)
+    pub_date = db.Column(db.DateTime)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, title, body, owner):
+    def __init__(self, title, body, owner, pub_date=None):
         self.title = title
         self.body = body
+        if pub_date is None:
+            pub_date = datetime.utcnow()
+        self.pub_date = pub_date
         self.owner = owner
         
 class User(db.Model):
@@ -38,27 +43,25 @@ def require_login():
 @app.route('/')
 def index():
     users = User.query.all()
-    return render_template('index.html', users=users, title='Home', header='Blog Users')
+    return render_template('index.html', users=users, header='Blog Users')
 
 @app.route('/blog')
 def blog():
     posts = Blog.query.all()
-    
     blog_id = request.args.get('id')
     user_id = request.args.get('user')
     
-    if user_id != None:
+    if user_id:
         posts = Blog.query.filter_by(owner_id=user_id)
         return render_template('user.html', posts=posts, header="User Posts")
-    if blog_id != None:
+    if blog_id:
         post = Blog.query.get(blog_id)
-        return render_template('entry.html', post=post, title='Blog Entry')
+        return render_template('entry.html', post=post )
 
-    return render_template('blog.html', posts=posts, title='Blogz', header='All Blog Posts')
+    return render_template('blog.html', posts=posts, header='All Blog Posts')
 
 @app.route('/newpost', methods=['POST', 'GET'])
-def new_post():
-    
+def new_post(): 
     owner = User.query.filter_by(username=session['username']).first()
     
     if request.method == 'POST':
@@ -78,10 +81,10 @@ def new_post():
             db.session.commit()        
             return redirect('/blog?id={}'.format(new_entry.id)) 
         else:
-            return render_template('newpost.html', title='New Entry', header='New Blog Entry', title_error=title_error, 
+            return render_template('newpost.html', header='New Blog Entry', title_error=title_error, 
                 body_error=body_error, blog_title=blog_title, blog_body=blog_body)
     
-    return render_template('newpost.html', title='New Entry', header='New Blog Entry')
+    return render_template('newpost.html', header='New Blog Entry')
 
 @app.route('/login', methods=['POST', 'GET'])
 def login():
